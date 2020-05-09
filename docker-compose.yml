@@ -1,0 +1,53 @@
+version: '2'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: app.Dockerfile
+    working_dir: /var/www
+    volumes:
+      - ./:/var/www
+    environment:
+      - "DB_PORT=3306"
+      - "APP_NAME=Voatr"
+      - "APP_URL=http://localhost:8080"
+  web:
+    build:
+      context: .
+      dockerfile: web.Dockerfile
+    depends_on:
+      - app
+    working_dir: /var/www
+    volumes_from:
+      - app
+    ports:
+      - 8080:80
+  database:
+    image: mysql:8
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      - "MYSQL_DATABASE=homestead"
+      - "MYSQL_USER=homestead"
+      - "MYSQL_PASSWORD=secret"
+      - "MYSQL_ROOT_PASSWORD=secret"
+    ports:
+        - "33061:3306"
+  redis:
+    image: redis
+  localstack:
+    image: localstack/localstack
+    ports:
+      - "4567-4584:4567-4584"
+      - "8081:8081"
+    environment:
+      - SERVICES=s3,sqs
+      - DEBUG=true
+      - DATA_DIR=/dev
+      - PORT_WEB_UI=8081
+    volumes:
+      - tmp:/tmp/localstack
+
+volumes:
+  dbdata:
+  tmp:
