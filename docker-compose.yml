@@ -9,7 +9,7 @@ services:
       - ./:/var/www
     environment:
       - "DB_PORT=3306"
-      - "APP_NAME=Voatr"
+      - "APP_NAME=Your App"
       - "APP_URL=http://localhost:8080"
   web:
     build:
